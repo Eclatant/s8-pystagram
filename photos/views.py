@@ -1,29 +1,30 @@
 from django.shortcuts import render
+from django.core.paginator import Paginator
+from django.core.paginator import EmptyPage
+from django.core.paginator import PageNotAnInteger
 
 #from photos.models import Post
 from .models import Post
 
 
 def list_posts(request):
-    try:
-        page = int(request.GET.get('page', 1))
-    except Exception:
-        page = 1
-    finally:
-        if page < 0:
-            page = 1
-
+    page = request.GET.get('page', 1)
     per_page = 2
-
-    start_page = (page-1) * per_page
-    end_page = page * per_page
 
     posts = Post.objects \
                 .all() \
-                .order_by('-created_at', '-pk')[start_page:end_page]
+                .order_by('-created_at', '-pk')
+
+    pg = Paginator(posts, per_page)
+    try:
+        contents = pg.page(page)
+    except PageNotAnInteger:
+        contents = pg.page(1)
+    except EmptyPage:
+        contents = []
 
     ctx = {
-        'posts': posts,
+        'posts': contents,
     }
     return render(request, 'list.html', ctx)
 
