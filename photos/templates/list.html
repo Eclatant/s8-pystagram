@@ -6,7 +6,7 @@
     <div class="photo_container">
         <p>{{ post.content }}</p>
         <p>
-        <a href="{% url 'view' pk=post.pk %}">{{ post.created_at }}</a>
+        <a href="{% url 'photos:view' pk=post.pk %}">{{ post.created_at }}</a>
         </p>
     </div>
     {% empty %}
