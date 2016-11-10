@@ -29,3 +29,18 @@ def list_posts(request):
     return render(request, 'list.html', ctx)
 
 
+def view_post(request, pk):
+    post = Post.objects.get(pk=pk)
+    ctx = {
+        'post': post,
+    }
+    return render(request, 'view.html', ctx)
+
+
+
+
+
+
+
+
+
