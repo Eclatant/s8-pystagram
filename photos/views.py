@@ -5,7 +5,23 @@ from .models import Post
 
 
 def list_posts(request):
-    posts = Post.objects.all().order_by('-created_at')
+    try:
+        page = int(request.GET.get('page', 1))
+    except Exception:
+        page = 1
+    finally:
+        if page < 0:
+            page = 1
+
+    per_page = 2
+
+    start_page = (page-1) * per_page
+    end_page = page * per_page
+
+    posts = Post.objects \
+                .all() \
+                .order_by('-created_at', '-pk')[start_page:end_page]
+
     ctx = {
         'posts': posts,
     }
