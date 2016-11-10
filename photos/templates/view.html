@@ -8,4 +8,15 @@
     {{ post.created_at }}
 </p>
 
+{% for comment in post.comment_set.all %}
+    <p>{{ comment.pk }}</p>
+    <p>{{ comment.content }}</p>
+{% empty %}
+    <p>댓글이 없습니다.</p>
+{% endfor %}
+
+
+
+
+
 
