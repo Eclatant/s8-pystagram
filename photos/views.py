@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
@@ -9,7 +10,15 @@ from .forms import PostForm
 
 
 def create_post(request):
-    form = PostForm()
+    if request.method == 'GET':
+        form = PostForm()
+    elif request.method == 'POST':
+        form = PostForm(request.POST)
+
+        if form.is_valid():
+            post = form.save()
+            return redirect('photos:view', pk=post.pk)
+
     ctx = {
         'form': form,
     }
