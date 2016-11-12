@@ -6,6 +6,7 @@ from django.core.paginator import PageNotAnInteger
 
 #from photos.models import Post
 from .models import Post
+from .models import Tag
 from .forms import PostForm
 
 
@@ -17,6 +18,14 @@ def create_post(request):
 
         if form.is_valid():
             post = form.save()
+
+            tag_text = form.cleaned_data.get('tagtext', '')
+            tags = tag_text.split(',')
+            for _tag in tags:
+                _tag = _tag.strip()
+                tag, _ = Tag.objects.get_or_create(name=_tag, defaults={'name': _tag})
+                post.tags.add(tag)
+
             return redirect('photos:view', pk=post.pk)
 
     ctx = {

@@ -4,11 +4,11 @@ from .models import Post
 
 
 class PostForm(forms.ModelForm):
-#    content = forms.IntegerField()
+    tagtext = forms.CharField()
 
     class Meta:
         model = Post
-        fields = ('category', 'content', 'tags', )
+        fields = ('category', 'content', )
 
 
 class SimpleForm(forms.Form):
