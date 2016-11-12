@@ -4,6 +4,9 @@ class Category(models.Model):
     name = models.CharField(max_length=40)
     parent = models.ForeignKey('self', null=True)
 
+    def __str__(self):
+        return self.name
+
 
 class Post(models.Model):
     category = models.ForeignKey(Category)
