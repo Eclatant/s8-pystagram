@@ -5,6 +5,15 @@ from django.core.paginator import PageNotAnInteger
 
 #from photos.models import Post
 from .models import Post
+from .forms import PostForm
+
+
+def create_post(request):
+    form = PostForm()
+    ctx = {
+        'form': form,
+    }
+    return render(request, 'edit_post.html', ctx)
 
 
 def list_posts(request):

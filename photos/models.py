@@ -7,8 +7,8 @@ class Category(models.Model):
 
 class Post(models.Model):
     category = models.ForeignKey(Category)
-    content = models.TextField()
-    tags = models.ManyToManyField('Tag')
+    content = models.TextField(null=False, blank=False)
+    tags = models.ManyToManyField('Tag', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
