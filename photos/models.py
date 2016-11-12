@@ -18,6 +18,9 @@ class Post(models.Model):
     def __str__(self):
         return '{}'.format(self.pk)
 
+    # class Meta:
+    #     ordering = ('-created_at', '-id', )
+
 
 class Comment(models.Model):
     post = models.ForeignKey(Post)

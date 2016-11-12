@@ -3,6 +3,7 @@ from django.shortcuts import redirect
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
+from django.views.generic import ListView
 
 #from photos.models import Post
 from .models import Post
@@ -54,6 +55,19 @@ def list_posts(request):
         'posts': contents,
     }
     return render(request, 'list.html', ctx)
+
+
+class PostListView(ListView):
+    model = Post
+    context_object_name = 'posts'
+    template_name = 'list.html'
+    paginate_by = 2
+    # queryset = Post.objects.order_by('-created_at')
+
+    def get_queryset(self):
+        return Post.objects.order_by('-created_at')
+
+list_posts = PostListView.as_view()
 
 
 def view_post(request, pk):
