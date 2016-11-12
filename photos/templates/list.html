@@ -1,4 +1,7 @@
 {% extends 'layout.html' %}
+{% load bootstrap3 %}
+
+{% block page_title %}글 목록 페이지{% endblock %}
 
 {% block body %}
 <div>
@@ -15,19 +18,8 @@
     <p>게시물이 없습니다.</p>
     {% endfor %}
 
-    {% if posts.has_previous %}
-    <a href="?page={{ posts.previous_page_number }}">이전 페이지</a>
-    {% endif %}
-    <p>
-        {{ posts.number }} / 
-        {{ posts.paginator.num_pages }}
-    </p>
-
-    {% if posts.has_next %}
-    <a href="?page={{ posts.next_page_number }}">다음 페이지</a>
-    {% endif %}
-
-
+    {% bootstrap_pagination posts %}
+    
 </div>
 
 {% endblock %}
