@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load bootstrap3 %}
 
 {% block page_title %}글 편집{% endblock %}
 
@@ -6,10 +7,12 @@
 
 <form method="POST" action="">
     {% csrf_token %}
-    {{ form.as_p }}
+    {# {{ form.as_p }} #}
+    {% bootstrap_form form %}
 
     <p>
-        <button type="submit">저장</button>
+        <button type="submit" class="btn btn-primary btn-lg">
+            {% bootstrap_icon "star" %} 저장</button>
     </p>
 </form>
 
