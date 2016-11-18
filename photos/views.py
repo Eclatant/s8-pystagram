@@ -4,6 +4,7 @@ from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from django.views.generic import ListView
+from django.views.generic.edit import CreateView
 
 #from photos.models import Post
 from .models import Post
@@ -33,6 +34,14 @@ def create_post(request):
         'form': form,
     }
     return render(request, 'edit_post.html', ctx)
+
+
+class PostCreateView(CreateView):
+    model = Post
+    form_class = PostForm
+    template_name = 'edit_post.html'
+
+create_post = PostCreateView.as_view()
 
 
 def list_posts(request):

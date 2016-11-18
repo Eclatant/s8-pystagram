@@ -1,4 +1,6 @@
 from django.db import models
+from django.urls import reverse_lazy
+
 
 class Category(models.Model):
     name = models.CharField(max_length=40)
@@ -17,6 +19,10 @@ class Post(models.Model):
 
     def __str__(self):
         return '{}'.format(self.pk)
+
+    def get_absolute_url(self):
+        return reverse_lazy('photos:view',
+                            kwargs={'pk': self.pk})
 
     # class Meta:
     #     ordering = ('-created_at', '-id', )
