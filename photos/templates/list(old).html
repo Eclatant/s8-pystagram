@@ -13,11 +13,29 @@
         <p>
             <a href="{% url 'photos:view' pk=post.pk %}">{{ post.created_at }}</a>
         </p>
+        <p>{{ post.created_at }}</p>
     </div>
     {% empty %}
     <p>게시물이 없습니다</p>
     {% endfor %}
-    {% bootstrap_pagination page_obj %}
+
+    <!--
+    {% if posts.has_previous %}
+    <a href="?page={{ posts.previous_page_number }}">이전 페이지</a>
+    {% endif %}
+
+    <p>
+        {{ posts.number }} /
+        {{ posts.paginator.num_pages }}
+    </p>
+
+    {% if posts.has_next %}
+    <a href="?page={{ posts.next_page_number }}">다음 페이지</a>
+    {% endif %}
+    -->
+
+    {# {% bootstrap_pagination posts %} #}
+
 </div>
 
 {% endblock %}

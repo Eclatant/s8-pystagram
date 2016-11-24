@@ -1,5 +1,5 @@
 {% extends 'layout.html' %}
-{% load bootstrap3 %}
+{# {% load bootstrap3 %} #}
 
 {% block page_title %}글 보기{% endblock %}
 
@@ -10,33 +10,23 @@
 <div>{{ post.content }}</div>
 
 <p>
-    {{ post.created_at }}
+  {{ post.created_at }}
+  <a href="{% url 'photos:edit' pk=post.pk %}"> [edit] </a>
 </p>
 
 {% for comment in post.comment_set.all %}
-    <div>
-        <p>{{ comment.pk }}</p>
-        <p>{{ comment.content }}</p>
-        <form method="POST" action="{% url 'photos:delete_comment' pk=comment.pk %}">
-            {% csrf_token %}
-            <button type="submit">댓글 삭제</button>
-        </form>
-    </div>
+    <p>{{ comment.pk }}</p>
+    <p>{{ comment.content }}</p>
 {% empty %}
-    <p>댓글이 없습니다.</p>
+    <p>댓글이 없습니다</p>
 {% endfor %}
 
 <form method="POST" action="">
-    {% csrf_token %}
-    {% bootstrap_form comment_form %}
-    <p>
-        <button type="submit" class="btn btn-primary btn-lg">
-            {% bootstrap_icon "star" %} 저장</button>
-    </p>
+  {% csrf_token %}
+  {{ form.as_p }}
+  {# {% bootstrap_form form %}  #}
+
+  <button type="submit" class="btn btn-primary">댓글달기</button>
 </form>
 
-
 {% endblock %}
-
-
-
