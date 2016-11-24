@@ -1,8 +1,10 @@
 {% load bootstrap3 %}
+{% load static from staticfiles %}
 <!DOCTYPE html>
 <html>
     <head>
         <title>{% block page_title %}Pystagram{% endblock %}</title>
+        <script src="{% static 'hello.js' %}"></script>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     </head>
