@@ -96,6 +96,7 @@ def view_post(request, pk):
             comment.post = post
             comment.save()
             return redirect(post)  # Post 모델의 `get_absolute_url()` 메서드 호출
+            # return redirect('photos:view', pk=post.pk)
 
     ctx = {
         'post': post,
