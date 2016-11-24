@@ -82,7 +82,18 @@ list_posts = PostListView.as_view()
 
 def view_post(request, pk):
     post = Post.objects.get(pk=pk)
-    form = CommentForm()
+
+    if request.method == 'GET':
+        form = CommentForm()
+    elif request.method == 'POST':
+        form = CommentForm(request.POST)
+
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect(post)  # Post 모델의 `get_absolute_url()` 메서드 호출
+
     ctx = {
         'post': post,
         'comment_form': form,
