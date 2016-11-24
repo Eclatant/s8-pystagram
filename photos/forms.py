@@ -2,7 +2,12 @@ from django import forms
 from django.forms import ValidationError
 
 from .models import Post
+from .models import Comment
 
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('content', )
 
 class PostForm(forms.ModelForm):
     tagtext = forms.CharField()

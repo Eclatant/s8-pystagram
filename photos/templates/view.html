@@ -1,4 +1,5 @@
 {% extends 'layout.html' %}
+{% load bootstrap3 %}
 
 {% block page_title %}글 보기{% endblock %}
 
@@ -19,6 +20,14 @@
     <p>댓글이 없습니다.</p>
 {% endfor %}
 
+<form method="POST" action="">
+    {% csrf_token %}
+    {% bootstrap_form comment_form %}
+    <p>
+        <button type="submit" class="btn btn-primary btn-lg">
+            {% bootstrap_icon "star" %} 저장 </button>
+    </p>
+</form>
 
 {% endblock %}
 

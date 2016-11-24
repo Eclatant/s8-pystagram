@@ -10,6 +10,7 @@ from django.views.generic.edit import CreateView
 from .models import Post
 from .models import Tag
 from .forms import PostForm
+from .forms import CommentForm
 
 
 def create_post(request):
@@ -81,16 +82,25 @@ list_posts = PostListView.as_view()
 
 def view_post(request, pk):
     post = Post.objects.get(pk=pk)
+    form = CommentForm()
+
+    if request.method == 'GET':
+        form = CommentForm()
+    elif request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.post = post
+            comment.save()
+            return redirect(post)
     ctx = {
         'post': post,
+        'comment_form': form,
     }
     return render(request, 'view.html', ctx)
 
 
-
-
-
-
-
-
-
+def delete_comment(request, pk):
+    if request.method != 'POST':
+        return HttpResponseBadRequest()
+    comment = get_object_or_404(Comment, pk)
