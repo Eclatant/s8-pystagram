@@ -14,7 +14,7 @@ class PostForm(forms.ModelForm):
 
     class Meta:
         model = Post
-        fields = ('category', 'content', )
+        fields = ('category', 'image', 'content',)
 
 #    def clean(self):
 #        password1 = self.cleaned_data['password1']

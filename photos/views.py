@@ -1,14 +1,17 @@
 from django.shortcuts import render
 from django.shortcuts import redirect
+from django.shortcuts import get_object_or_404
 from django.core.paginator import Paginator
 from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
+from django.http import HttpResponseBadRequest
 
 #from photos.models import Post
 from .models import Post
 from .models import Tag
+from .models import Comment
 from .forms import PostForm
 from .forms import CommentForm
 
@@ -103,4 +106,7 @@ def view_post(request, pk):
 def delete_comment(request, pk):
     if request.method != 'POST':
         return HttpResponseBadRequest()
-    comment = get_object_or_404(Comment, pk)
+    comment = get_object_or_404(Comment, pk=pk)
+    comment.delete()
+
+    return redirect(comment.post)
