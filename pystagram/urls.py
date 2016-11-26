@@ -9,7 +9,7 @@ from django.contrib.auth.views import logout
 
 urlpatterns = [
     url(r'^login/$', login, {'template_name': 'login.html'}),
-    url(r'^logout/$', logout),
+    url(r'^logout/$', logout, {'next_page': settings.LOGIN_URL}),
     url(r'^photos/', include('photos.urls')),
     url(r'^admin/', admin.site.urls),
 ]
