@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse_lazy
+from django.conf import settings
 
 
 class Category(models.Model):
@@ -11,6 +12,7 @@ class Category(models.Model):
 
 
 class Post(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     category = models.ForeignKey(Category)
     content = models.TextField(null=False, blank=False)
     image = models.ImageField(upload_to='%Y/%m/%d/', null=True)
@@ -30,6 +32,7 @@ class Post(models.Model):
 
 
 class Comment(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL)
     post = models.ForeignKey(Post)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
