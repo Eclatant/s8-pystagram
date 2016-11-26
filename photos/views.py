@@ -25,7 +25,9 @@ def create_post(request):
         form = PostForm(request.POST, request.FILES)
 
         if form.is_valid():
-            post = form.save()
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
 
             tag_text = form.cleaned_data.get('tagtext', '')
             tags = tag_text.split(',')
@@ -85,6 +87,7 @@ class PostListView(ListView):
 list_posts = PostListView.as_view()
 
 
+@login_required
 def view_post(request, pk):
     post = Post.objects.get(pk=pk)
 
@@ -95,6 +98,7 @@ def view_post(request, pk):
 
         if form.is_valid():
             comment = form.save(commit=False)
+            comment.user = request.user
             comment.post = post
             comment.save()
             return redirect(post)  # Post 모델의 `get_absolute_url()` 메서드 호출

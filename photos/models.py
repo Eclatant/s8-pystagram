@@ -15,7 +15,7 @@ class Post(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL)
     category = models.ForeignKey(Category)
     content = models.TextField(null=False, blank=False)
-    image = models.ImageField(upload_to='%Y/%m/%d/', null=True)
+    image = models.ImageField(upload_to='%Y/%m/%d/', null=True, blank=True)
     tags = models.ManyToManyField('Tag', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
