@@ -57,7 +57,7 @@ ROOT_URLCONF = 'pystagram.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates1')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,6 +132,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/uploads/'
 
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploadfiles')
+
+LOGIN_URL = '/login/'
+
+#LOGIN_REDIRECT_URL = '/photos/new/'
+
+from django.urls import reverse_lazy
+LOGIN_REDIRECT_URL = reverse_lazy('photos:new')
 
 
 

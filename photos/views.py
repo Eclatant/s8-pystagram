@@ -7,6 +7,7 @@ from django.core.paginator import PageNotAnInteger
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseBadRequest
+from django.contrib.auth.decorators import login_required
 
 #from photos.models import Post
 from .models import Post
@@ -16,6 +17,7 @@ from .forms import PostForm
 from .forms import CommentForm
 
 
+@login_required
 def create_post(request):
     if request.method == 'GET':
         form = PostForm()
@@ -45,7 +47,7 @@ class PostCreateView(CreateView):
     form_class = PostForm
     template_name = 'edit_post.html'
 
-create_post = PostCreateView.as_view()
+#create_post = PostCreateView.as_view()
 
 
 def list_posts(request):
