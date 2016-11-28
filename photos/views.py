@@ -7,6 +7,7 @@ from django.core.paginator import PageNotAnInteger
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseBadRequest
+from django.contrib.auth.decorators import login_required
 
 #from photos.models import Post
 from .models import Post
@@ -15,15 +16,23 @@ from .models import Comment
 from .forms import PostForm
 from .forms import CommentForm
 
-
+@login_required
 def create_post(request):
+    # if not request.user.is_authenticated():
+    #     raise Exception('누구세요?')
+
     if request.method == 'GET':
         form = PostForm()
+        # pk = request.GET.get('post')
+        # post = get_object_or_404(Post, pk=pk)
+        # form = PostForm(post)
     elif request.method == 'POST':
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
 
         if form.is_valid():
-            post = form.save()
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
 
             tag_text = form.cleaned_data.get('tagtext', '')
             tags = tag_text.split(',')
@@ -45,7 +54,7 @@ class PostCreateView(CreateView):
     form_class = PostForm
     template_name = 'edit_post.html'
 
-create_post = PostCreateView.as_view()
+# create_post = PostCreateView.as_view()
 
 
 def list_posts(request):
@@ -83,6 +92,7 @@ class PostListView(ListView):
 list_posts = PostListView.as_view()
 
 
+@login_required
 def view_post(request, pk):
     post = Post.objects.get(pk=pk)
     form = CommentForm()
@@ -93,6 +103,7 @@ def view_post(request, pk):
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
+            comment.user = request.user
             comment.post = post
             comment.save()
             return redirect(post)
