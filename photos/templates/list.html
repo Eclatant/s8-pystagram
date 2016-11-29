@@ -17,6 +17,11 @@
     {% empty %}
     <p>게시물이 없습니다.</p>
     {% endfor %}
+
+    <div align=right >
+        <a href="{% url 'photos:new' %}"> 새글 </a>
+    </div>
+
     {% bootstrap_pagination page_obj %}
     
 </div>
