@@ -13,6 +13,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Post
 from .models import Tag
 from .models import Comment
+from .models import Category
 from .forms import PostForm
 from .forms import CommentForm
 
@@ -56,6 +57,35 @@ class PostCreateView(CreateView):
 
 # create_post = PostCreateView.as_view()
 
+def edit_post(request, pk):
+    if request.method == 'GET':
+        post = get_object_or_404(Post, pk=pk)
+        form = PostForm(instance=post)
+    elif request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = get_object_or_404(Post, pk=pk)
+            category = Category(request.POST.get('category'))
+            post.category = category
+            post.content = request.POST.get('content')
+            post.image = request.POST.get('image')
+            post.user = request.user
+            post.save()
+
+            tag_text = form.cleaned_data.get('tagtext', '')
+            tags = tag_text.split(',')
+            for _tag in tags:
+                _tag = _tag.strip()
+                tag, _ = Tag.objects.get_or_create(name=_tag, defaults={'name': _tag})
+                post.tags.add(tag)
+
+            return redirect('photos:view', pk=post.pk)
+
+    ctx = {
+        'form': form,
+    }
+    return render(request, 'edit_post.html', ctx)
+
 
 def list_posts(request):
     page = request.GET.get('page', 1)
@@ -95,7 +125,6 @@ list_posts = PostListView.as_view()
 @login_required
 def view_post(request, pk):
     post = Post.objects.get(pk=pk)
-    form = CommentForm()
 
     if request.method == 'GET':
         form = CommentForm()
