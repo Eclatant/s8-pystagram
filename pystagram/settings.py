@@ -25,7 +25,7 @@ SECRET_KEY = '^q&+l)4%$@x1szvkpy%cv!#7r4zlwzrzh#9hdi-2ent^k82=_h'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -50,6 +50,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'pystagram.sample_middlewares.SampleMiddleware',
 ]
 
 ROOT_URLCONF = 'pystagram.urls'
@@ -124,7 +125,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'statics'),
-    os.path.join(BASE_DIR, 'statics2'),
+#    os.path.join(BASE_DIR, 'statics2'),
 ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
