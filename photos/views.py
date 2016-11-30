@@ -7,6 +7,8 @@ from django.core.paginator import PageNotAnInteger
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseBadRequest
+from django.http import HttpResponseNotFound
+from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 
 #from photos.models import Post
@@ -24,9 +26,6 @@ def create_post(request):
 
     if request.method == 'GET':
         form = PostForm()
-        # pk = request.GET.get('post')
-        # post = get_object_or_404(Post, pk=pk)
-        # form = PostForm(post)
     elif request.method == 'POST':
         form = PostForm(request.POST, request.FILES)
 
@@ -57,6 +56,7 @@ class PostCreateView(CreateView):
 
 # create_post = PostCreateView.as_view()
 
+@login_required
 def edit_post(request, pk):
     if request.method == 'GET':
         post = get_object_or_404(Post, pk=pk)
@@ -86,6 +86,17 @@ def edit_post(request, pk):
     }
     return render(request, 'edit_post.html', ctx)
 
+
+@login_required
+def delete_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method == 'GET':
+        return redirect(post)
+    elif request.method == 'POST':
+        if request.user != post.user:
+            return HttpResponseForbidden()
+        post.delete()
+        return redirect('photos:list')
 
 def list_posts(request):
     page = request.GET.get('page', 1)
@@ -124,7 +135,10 @@ list_posts = PostListView.as_view()
 
 @login_required
 def view_post(request, pk):
-    post = Post.objects.get(pk=pk)
+    try:
+        post = Post.objects.get(pk=pk)
+    except Post.DoesNotExist:
+        return HttpResponseNotFound()
 
     if request.method == 'GET':
         form = CommentForm()
@@ -143,6 +157,7 @@ def view_post(request, pk):
     return render(request, 'view.html', ctx)
 
 
+@login_required
 def delete_comment(request, pk):
     if request.method != 'POST':
         return HttpResponseBadRequest()

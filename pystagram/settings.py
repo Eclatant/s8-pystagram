@@ -137,6 +137,7 @@ MEDIA_URL = '/uploads/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'uploadfiles')
 
 LOGIN_URL = '/login/'
+LOGOUT_URL = '/logout/'
 
 # LOGIN_REDIRECT_URL = '/photos/new/'     # default is /accounts/profile/
 from django.urls import reverse_lazy

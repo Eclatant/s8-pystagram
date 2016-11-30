@@ -19,9 +19,7 @@ from django.core.urlresolvers import resolve
 
 from . import views, models, forms
 
-
 User = get_user_model()  # noqa
-
 
 class PostTest(TestCase):
     def setUp(self):
@@ -36,12 +34,14 @@ class PostTest(TestCase):
         for _user in self.users:
             User.objects.create_user(**_user)
 
+        models.Category(name='root').save()
+
         self.urls = namedtuple('URL', (
             'create_post', 'delete_post', 'view_post',
             'list_posts', 'create_comment', 'delete_comment',
         ))(
             # 게시물 작성하는 URL name 은 'create_post'
-            lambda : reverse('photos:create'),
+            lambda : reverse('photos:new'),
 
             # 개별 게시물 지우는 URL name 은 'delete_post'이며,
             # URL패턴의 그룹은 pk.
@@ -75,20 +75,27 @@ class PostTest(TestCase):
             self.urls.create_post(), data=data, follow=follow
         )
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
+    def test_login_logout(self):
+        """로그인, 로그아웃 테스트.
+        """
+        response = self.client.post(settings.LOGIN_URL, self.users[0], follow=True)
+        self.assertTrue(response.context['user'].is_active)
+        response = self.client.post(settings.LOGOUT_URL, follow=True)
+        self.assertFalse(response.context['user'].is_active)
+
     def test_404(self):
         """없는 페이지에 접근하는 테스트.
         """
         response = self.client.get('/page_not_found/')
         self.assertEqual(response.status_code, 404)
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
     def test_create_post_by_view_on_logout(self):
         """로그아웃 상태에서 뷰 함수를 이용해 게시물을 게시하는 테스트.
         """
         _form_data = {
-            'title': 'test title',
+            'category': models.Category.objects.first(),
             'content': 'test content',
+            'tagtext': 'asdf',
         }
         # 로그인하지 않은 상태에서 게시물 게시 시도.
         response = self._add_post(_form_data)
@@ -100,13 +107,31 @@ class PostTest(TestCase):
         # response = self._add_post(_form_data, follow=False)
         # self.assertEqual(response.status_code, 302)
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
+    def test_create_post_by_view_on_login_should_200(self):
+        """로그인 상태에서 뷰 함수를 이용해 생성된 게시물을 확인하는 테스트.
+        """
+        _form_data = {
+            'category': "1",
+            'content': 'test content',
+            'tagtext': 'asdf',
+        }
+        self._login(**self.users[0])
+
+        # 로그인 했으므로
+        response = self._add_post(_form_data, follow=False)
+        self.assertEqual(response.resolver_match.func.__name__, 'create_post')
+        self.assertEqual(response.status_code, 302)
+
+        p1 = models.Post.objects.first()
+        self.assertEqual(p1.content, 'test content')
+
     def test_create_post_by_view_on_login(self):
         """로그인 상태에서 뷰 함수를 이용해 게시물을 게시하는 테스트.
         """
         _form_data = {
-            'title': 'Sjfdlkja23@#$!@SDF title',
-            'content': 'FSAD@3@#$!sdflkj content',
+            'category': "1",
+            'content': 'test content',
+            'tagtext': 'asdf',
         }
         self._login(**self.users[0])
         # 게시물 게시 시도.
@@ -134,11 +159,11 @@ class PostTest(TestCase):
         )
         # 화면에 사용된 템플릿 컨텍스트의 post와 글 작성에 사용한 제목 비교. 
         self.assertEqual(
-            response.context['post'].title,
-            _form_data['title']
+            response.context['post'].content,
+            _form_data['content']
         )
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
+
     def test_create_post_for_form_errors(self):
         """뷰 함수를 이용해 게시물을 게시하는 테스트 중 필수 입력 폼 테스트.
         """
@@ -149,7 +174,7 @@ class PostTest(TestCase):
         # 게시에 사용한 폼 인스턴스 객체가 템플릿 컨텍스트에 있는지 테스트.
         self.assertIn('form', response.context)
         # 템플릿 변수인 form에 필수 폼 필드에 대해 오류가 있는지 테스트.
-        self.assertTrue(response.context['form'].has_error('title'))
+        self.assertTrue(response.context['form'].has_error('category'))
         self.assertTrue(response.context['form'].has_error('content'))
 
         # 필수 입력 항목인 title, content 빠뜨리고 게시물 게시 시도.
@@ -158,41 +183,64 @@ class PostTest(TestCase):
         # 게시에 사용한 폼 인스턴스 객체가 템플릿 컨텍스트에 있는지 테스트.
         self.assertIn('form', response.context)
         # 템플릿 변수인 form에 필수 폼 필드에 대해 오류가 있는지 테스트.
-        self.assertTrue(response.context['form'].has_error('title'))
+        self.assertTrue(response.context['form'].has_error('category'))
         self.assertTrue(response.context['form'].has_error('content'))
 
         # 필수 입력 항목인 content 빠뜨리고 게시물 게시 시도.
-        _form_data['title'] = 'SADFSAFD#$!@#$! title'
+        _form_data['category'] = "1"
         response = self._add_post(_form_data)
         # 게시에 사용한 폼 인스턴스 객체가 템플릿 컨텍스트에 있는지 테스트.
         self.assertIn('form', response.context)
         # 템플릿 변수인 form에 필수 폼 필드에 대해 오류가 있는지 테스트.
-        self.assertFalse(response.context['form'].has_error('title'))
+        self.assertFalse(response.context['form'].has_error('category'))
         self.assertTrue(response.context['form'].has_error('content'))
 
         # 필수 입력 항목 다 넣고 게시물 게시 시도.
         _form_data['content'] = 'SADFSAFD#$!@#$! content'
+        _form_data['tagtext'] = 'asdf'
         response = self._add_post(_form_data)
+
         # 게시에 사용한 폼 인스턴스 객체가 템플릿 컨텍스트에 없는지 테스트.
         self.assertNotIn('form', response.context)
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
     def test_view_post_not_exists(self):
         """존재하지 않는 개별 게시물 페이지에 접속하여 404가 뜨는지 테스트.
         """
-
+        self._login(**self.users[0])
         # 존재하지 않는 게시물에 접근.
         response = self.client.get(self.urls.view_post(9999), follow=True)
         # http status가 404인지 확인.
         self.assertEqual(response.status_code, 404)
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
+    # def test_delete_post(self): # bug : this name doesn't invoke test
+    def test_add_one_post_delete_PostDoesNotExist(self):
+        """게시물 하나 생성, 삭제 후, Post.objects.latest() 할 때 DoesNotExist 발생하는지 확인하는 테스트.
+        """
+        _form_data = {
+            'category': "1",
+            'content': 'content will be deleted',
+            'tagtext': 'asdf',
+        }
+        self._login(**self.users[0])
+        # 게시물 게시 시도.
+        response = self._add_post(_form_data)
+        self.assertIn(response.status_code, (200, 201,))
+        latest_post = models.Post.objects.latest('pk')
+        self.assertEqual(latest_post.content, 'content will be deleted')
+
+        response = self.client.post(
+            self.urls.delete_post(latest_post.pk), follow=True
+        )
+        with self.assertRaises(models.Post.DoesNotExist):
+            models.Post.objects.latest('pk')
+
     def test_delete_post_on_logout(self):
         """로그아웃 상태에서 개별 게시물을 지우는 테스트.
         """
         _form_data = {
-            'title': 'Sjfdlkja23@#$!@SDF title',
+            'category': "1",
             'content': 'FSAD@3@#$!sdflkj content',
+            'tagtext': 'asdf',
         }
         self._login(**self.users[0])
         # 게시물 게시 시도.
@@ -210,13 +258,13 @@ class PostTest(TestCase):
         # 로그인 URL로 redirect 됐는지 확인.
         self.assertEqual(response.resolver_match.func.__name__, 'login')
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
     def test_delete_post_without_permm(self):
         """권한 없이 개별 게시물을 지우는 시도하는 테스트.
         """
         _form_data = {
-            'title': 'Sjfdlkja23@#$!@SDF title',
+            'category': "1",
             'content': 'FSAD@3@#$!sdflkj content',
+            'tagtext': 'asdf',
         }
         self._login(**self.users[0])
         # 게시물 게시 시도.
@@ -235,13 +283,14 @@ class PostTest(TestCase):
         # 권한이 없으므로 403 status 응답해야 함.
         self.assertEqual(response.status_code, 403)
 
-    @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
+    # @unittest.skip('이 장식자를 제거하며 하나씩 테스트를 통과하세요')
     def test_delete_post(self):
         """개별 게시물을 지우는 테스트.
         """
         _form_data = {
-            'title': 'Sjfdlkja23@#$!@SDF title',
+            'category': "1",
             'content': 'FSAD@3@#$!sdflkj content',
+            'tagtext': 'asdf',
         }
         self._login(**self.users[0])
         # 게시물 게시 시도.
@@ -255,9 +304,14 @@ class PostTest(TestCase):
         response = self.client.get(_delete_post_url, follow=True)
         self.assertEqual(response.status_code, 200)
         # 이동한 URL의 뷰 함수가 delete_post 인지 테스트.
+        # self.assertEqual(
+        #     response.resolver_match.func,
+        #     resolve(_delete_post_url)[0]
+        # )
+        # 이동한 URL의 뷰 함수가 view_post 인지 테스트.
         self.assertEqual(
             response.resolver_match.func,
-            resolve(_delete_post_url)[0]
+            resolve(self.urls.view_post(latest_post.pk))[0]
         )
 
         # http method POST로 접근.
