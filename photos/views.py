@@ -99,14 +99,14 @@ def delete_post(request, pk):
         return redirect('photos:list')
 
 
-# from pystagram.sample_exceptions import HelloWorldError
+from pystagram.sample_exceptions import HelloWorldError
 
 import logging
 logger = logging.getLogger('django')
 
 
 def list_posts(request):
-    # raise HelloWorldError('으악, 뭔가 문제가 있다.')
+    raise HelloWorldError('Ooops, trouble !!!')
     logger.info('Make a list for posts')
 
     page = request.GET.get('page', 1)

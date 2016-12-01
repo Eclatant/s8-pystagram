@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'photos',
     'bootstrap3',
     'profiles',
+    'raven.contrib.django.raven_compat',
 ]
 
 MIDDLEWARE = [
@@ -146,6 +147,15 @@ LOGIN_REDIRECT_URL = reverse_lazy('photos:new')
 # settings.py 를 먼저 읽기 때문에, photos:new 값이 나중에 evaluate 되도록
 
 
+import raven
+
+RAVEN_CONFIG = {
+    'dsn': 'https://909c7fa650614adaa454d96316673304:69e70bdf85c64f1190aaad402de9579d@sentry.io/118832',
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
+}
+
 
 LOGGING = {
     'version': 1,
@@ -178,9 +188,24 @@ LOGGING = {
             'level': 'ERROR',
             'class': 'django.utils.log.AdminEmailHandler',
             # 'filters': ['special']
-        }
+        },
+        'sentry': {
+            'level': 'DEBUG',
+            'class': 'raven.contrib.django.handlers.SentryHandler',
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
+        'raven': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
+        'sentry.errors': {
+            'level': 'DEBUG',
+            'handlers': ['console'],
+            'propagate': False,
+        },
         'django': {
             'handlers': ['console'],
             'propagate': True,
@@ -195,5 +220,9 @@ LOGGING = {
         #     'level': 'INFO',
         #     'filters': ['special']
         # }
-    }
+    },
+    'root': {
+        'level': 'DEBUG',
+        'handlers': ['sentry']
+    },
 }
