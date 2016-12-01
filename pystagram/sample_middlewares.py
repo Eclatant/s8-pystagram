@@ -12,5 +12,5 @@ class SampleMiddleware(MiddlewareMixin):
                 'error': exc,
                 'status': 500,
             }
-            return render(request, 'error.html', ctx)
+            return render(request, 'error.html', ctx, status=500)
 
