@@ -8,6 +8,7 @@ app_name = 'photos'
 urlpatterns = [
     url(r'^new/$', views.create_post, name='new'),
     url(r'^(?P<pk>[0-9]+)/$', views.view_post, name='view'),
+    url(r'^(?P<pk>[0-9]+)/edit/$', views.edit_post, name='edit'),
     url(r'^$', views.list_posts, name='list'),
     url(r'^comments/(?P<pk>[0-9]+)/delete/$',
         views.delete_comment, name='delete_comment')

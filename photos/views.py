@@ -1,3 +1,5 @@
+import logging
+
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -15,6 +17,10 @@ from .models import Tag
 from .models import Comment
 from .forms import PostForm
 from .forms import CommentForm
+from pystagram.sample_exceptions import HelloWorldError
+
+
+logger = logging.getLogger('django')
 
 
 @login_required
@@ -53,6 +59,7 @@ class PostCreateView(CreateView):
 
 
 def list_posts(request):
+    logger.warning('경고 경고')
     page = request.GET.get('page', 1)
     per_page = 2
 
@@ -84,7 +91,7 @@ class PostListView(ListView):
     def get_queryset(self):
         return Post.objects.order_by('-created_at')
 
-list_posts = PostListView.as_view()
+#list_posts = PostListView.as_view()
 
 
 @login_required
@@ -121,7 +128,27 @@ def delete_comment(request, pk):
 
     return redirect(comment.post)  # Post 모델의 `get_absolute_url()` 메서드 호출
 
+@login_required
+def edit_post(request, pk):
+    post = Post.objects.get(pk=pk)
 
+    if request.method == 'GET':
+        form = PostForm(instance=post)
+    elif request.method == 'POST':
+        form = PostForm(request.POST, request.FILES, instance=post)
+
+        if form.is_valid():
+            post = form.save(commit=False)
+            post.user = request.user
+            post.save()
+            return redirect(post)  # Post 모델의 `get_absolute_url()` 메서드 호출
+            # return redirect('photos:view', pk=post.pk)
+
+    ctx = {
+        'post': post,
+        'form': form,
+    }
+    return render(request, 'edit_post.html', ctx)
 
 
 
