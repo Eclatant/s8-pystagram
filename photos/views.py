@@ -59,7 +59,9 @@ class PostCreateView(CreateView):
 
 
 def list_posts(request):
-    logger.warning('경고 경고')
+    #logger.error('lorem ipsum', exc_info=True, extra={'request': request}) 
+    #logger.warning('경고 경고')
+    raise HelloWorldError('argh error')
     page = request.GET.get('page', 1)
     per_page = 2
 
