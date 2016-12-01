@@ -98,7 +98,12 @@ def delete_post(request, pk):
         post.delete()
         return redirect('photos:list')
 
+
+from pystagram.sample_exceptions import HelloWorldError
+
 def list_posts(request):
+    raise HelloWorldError('으악, 뭔가 문제가 있다.')
+
     page = request.GET.get('page', 1)
     per_page = 2
 
@@ -130,7 +135,8 @@ class PostListView(ListView):
     def get_queryset(self):
         return Post.objects.order_by('-created_at')
 
-list_posts = PostListView.as_view()
+
+# list_posts = PostListView.as_view()
 
 
 @login_required
