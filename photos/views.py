@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Post
 from .models import Tag
 from .models import Comment
+from .models import Like
 from .forms import PostForm
 from .forms import CommentForm
 from pystagram.sample_exceptions import HelloWorldError
@@ -152,6 +153,24 @@ def edit_post(request, pk):
     }
     return render(request, 'edit_post.html', ctx)
 
+
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method != 'POST':
+        raise Exception('bad request')
+
+    qs = post.like_set.filter(user=request.user)
+    if qs.exists():
+        like = qs.get()
+        like.delete()
+    else:
+        like = Like()
+        like.post = post
+        like.user = request.user
+        like.save()
+
+    return redirect(post)
 
 
 

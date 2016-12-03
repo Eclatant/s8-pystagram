@@ -1,9 +1,22 @@
 {% extends 'layout.html' %}
+{% load my_tags %}
 {% load bootstrap3 %}
 
 {% block page_title %}글 보기{% endblock %}
 
 {% block body %}
+
+{% autoescape off %}
+{% helloworld "first" "second" kwd1="1" kwd2="2" %}
+{% endautoescape %}
+
+<div style="border: 1px solid #000;">
+{% addnim %}
+<p>현재 이용자 : {{ request.user }}</p>
+<p>작성자 : {{ post.user }}</p>
+{% endaddnim %}
+</div>
+
 
 <h3>{{ post.pk }}번 사진</h3>
 
@@ -15,6 +28,13 @@
 
 <p>
     {{ post.created_at }}
+</p>
+<p>
+    {% if post|did_like:request.user %}
+    좋아요 취소
+    {% else %}
+    좋아요
+    {% endif %}
 </p>
 
 {% for comment in post.comment_set.all %}

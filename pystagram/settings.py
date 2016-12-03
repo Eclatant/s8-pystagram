@@ -41,7 +41,7 @@ INSTALLED_APPS = [
     'photos',
     'bootstrap3',
     'profiles',
-    'raven.contrib.django.raven_compat',
+#    'raven.contrib.django.raven_compat',
 ]
 
 MIDDLEWARE = [
@@ -191,6 +191,6 @@ LOGGING = {
 }
 
 RAVEN_CONFIG = {
-    'dsn': 'https://433a7ddb41fd4f53976a78fd7f68ebd6:619216e05ea34d37b572f36291ed589e@sentry.io/118833',
+#    'dsn': 'https://433a7ddb41fd4f53976a78fd7f68ebd6:619216e05ea34d37b572f36291ed589e@sentry.io/118833',
 #    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
