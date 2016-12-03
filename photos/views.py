@@ -1,3 +1,4 @@
+import os
 import logging
 
 from django.shortcuts import render
@@ -10,6 +11,7 @@ from django.views.generic import ListView
 from django.views.generic.edit import CreateView
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 #from photos.models import Post
 from .models import Post
@@ -24,12 +26,35 @@ from pystagram.sample_exceptions import HelloWorldError
 logger = logging.getLogger('django')
 
 
+import base64
+
+
+def get_base64_image(data):
+    if data is None or ';base64,' not in data:
+        return None
+
+    _format, _content = data.split(';base64,')
+    return base64.b64decode(_content)
+
+
 @login_required
 def create_post(request):
     if request.method == 'GET':
         form = PostForm()
     elif request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
+        filtered = request.POST.get('filtered_image')
+        if filtered:
+            filtered_image = get_base64_image(filtered)
+            filename = request.FILES['image'].name.split(os.sep)[-1]
+            _filedata = {
+                'image': SimpleUploadedFile(
+                    filename, filtered_image
+                )
+            }
+        else:
+            _filedata = request.FILES
+
+        form = PostForm(request.POST, _filedata)
 
         if form.is_valid():
             post = form.save(commit=False)

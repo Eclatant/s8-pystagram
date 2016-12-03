@@ -5,9 +5,17 @@
 
 {% block body %}
 
-<form method="POST" action="" enctype="multipart/form-data">
+<form method="POST" id="form-post" action="" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="hidden" name="filtered_image" />
     {# {{ form.as_p }} #}
+
+    <div id="filter_nav">
+        <p><img src="" id="preview" /></p>
+        <button value="vintage">Vintage</button>
+        <button value="sepia">Sepia</button>
+    </div>
+
     {% bootstrap_form form %}
 
     <p>
