@@ -12,6 +12,13 @@
 {% endautoescape %}
 </p>
 
+<hr />
+{% addnim %}
+<p>현재 이용자 : {{ request.user }} </p>
+<p>작성자 : {{ post.user }} </p>
+{% endaddnim %}
+<hr />
+
 <h3>{{ post.pk }}번 사진</h3>
 
 {% if post.image %}
