@@ -15,6 +15,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Post
 from .models import Tag
 from .models import Comment
+from .models import Like
 from .models import Category
 from .forms import PostForm
 from .forms import CommentForm
@@ -86,6 +87,25 @@ def edit_post(request, pk):
     }
     return render(request, 'edit_post.html', ctx)
 
+@login_required
+def like_post(request, pk):
+    post = get_object_or_404(Post, pk=pk)
+    if request.method != 'POST':
+        raise Exception('bad request')
+    # like, is_created = Like.objects.get_or_create(
+    #                     post=post,
+    #                     user=request.user,
+    #                     default = {'post': post, 'user': request.user})
+    qs = post.like_set.filter(user=request.user)
+    if qs.exists():     # do not use len(qs)
+        like = qs.get()
+        like.delete()
+    else:
+        Like(user=request.user, post=post).save()
+
+    return redirect(post)   # models.photos 에 get_absolute_url 함수 때문임
+    # return redirect('photos:view', pk=post.pk)
+
 
 @login_required
 def delete_post(request, pk):
@@ -141,7 +161,7 @@ class PostListView(ListView):
         return Post.objects.order_by('-created_at')
 
 
-# list_posts = PostListView.as_view()
+list_posts = PostListView.as_view()
 
 
 @login_required
