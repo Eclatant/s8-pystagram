@@ -67,5 +67,3 @@ class Like2(models.Model):
 
 
 
-
-
