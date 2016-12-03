@@ -6,6 +6,12 @@
 
 {% block body %}
 
+<p>
+{% autoescape off %}
+{% helloworld "first" "second" "third" aaa="asdf" %}
+{% endautoescape %}
+</p>
+
 <h3>{{ post.pk }}번 사진</h3>
 
 {% if post.image %}
