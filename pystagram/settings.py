@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'pystagram.sample_middlewares.SampleMiddleware',
+    # 'pystagram.sample_middlewares.SampleMiddleware',
 ]
 
 ROOT_URLCONF = 'pystagram.urls'
