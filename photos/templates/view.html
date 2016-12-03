@@ -1,5 +1,6 @@
 {% extends 'layout.html' %}
 {% load bootstrap3 %}
+{% load my_tags %}
 
 {% block page_title %}글 보기{% endblock %}
 
@@ -16,6 +17,14 @@
 <p>
     {{ post.created_at }}
 </p>
+
+<div>
+    {% if post|did_like:request.user %}}
+        좋아요 취소
+    {% else %}
+        좋아요
+    {% endif %}
+</div
 
 <div align=right >
     <a href="{% url 'photos:edit' pk=post.pk %}"?> 수정 </a>
