@@ -18,6 +18,7 @@ urlpatterns = [
     url(r'^photos/', include('photos.urls')),
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
+    url(r'', include('social.apps.django_app.urls', namespace='social')),
 ]
 
 #           += extend
