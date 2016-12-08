@@ -1,6 +1,7 @@
 import os
 import logging
 
+from django.http import HttpResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -12,6 +13,11 @@ from django.views.generic.edit import CreateView
 from django.http import HttpResponseBadRequest
 from django.contrib.auth.decorators import login_required
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core import serializers
+from django.views.decorators.cache import cache_page
+from django.core.cache import cache
+from rest_framework import serializers as drf_serializers
+from rest_framework import viewsets
 
 #from photos.models import Post
 from .models import Post
@@ -87,7 +93,6 @@ class PostCreateView(CreateView):
 def list_posts(request):
     #logger.error('lorem ipsum', exc_info=True, extra={'request': request}) 
     #logger.warning('경고 경고')
-    raise HelloWorldError('argh error')
     page = request.GET.get('page', 1)
     per_page = 2
 
@@ -102,6 +107,10 @@ def list_posts(request):
         contents = pg.page(1)
     except EmptyPage:
         contents = []
+
+    if request.is_ajax():
+        data = serializers.serialize('json', contents)
+        return HttpResponse(data)
 
     ctx = {
         'posts': contents,
@@ -124,7 +133,14 @@ class PostListView(ListView):
 
 @login_required
 def view_post(request, pk):
-    post = Post.objects.get(pk=pk)
+    key = 'post_object_{}'.format(pk)
+    post = cache.get(key)
+    if not post:
+        post = Post.objects.get(pk=pk)
+        cache.set(key, post, 300)
+        print('get data from db')
+    else:
+        print('get cahced data')
 
     if request.method == 'GET':
         form = CommentForm()
@@ -198,6 +214,15 @@ def like_post(request, pk):
     return redirect(post)
 
 
+class PostSerializer(drf_serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['category', 'content', ]
+
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
 
 
 

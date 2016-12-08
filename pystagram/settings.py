@@ -42,6 +42,8 @@ INSTALLED_APPS = [
     'bootstrap3',
     'profiles',
 #    'raven.contrib.django.raven_compat',
+    'rest_framework',
+    'social.apps.django_app.default',
 ]
 
 MIDDLEWARE = [
@@ -68,6 +70,8 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
             ],
         },
     },
@@ -194,3 +198,22 @@ RAVEN_CONFIG = {
 #    'dsn': 'https://433a7ddb41fd4f53976a78fd7f68ebd6:619216e05ea34d37b572f36291ed589e@sentry.io/118833',
 #    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
+
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 2,
+}
+
+AUTHENTICATION_BACKENDS = [
+    'social.backends.facebook.FacebookOAuth2',
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+SOCIAL_AUTH_FACEBOOK_KEY = '220372455075426'
+
+SOCIAL_AUTH_FACEBOOK_SECRET = ''
+
+SOCIAL_AUTH_URL_NAMESPACE = 'social'
+
+SOCIAL_AUTH_LOGIN_REDIRECT_URL = '/photos/'
+
+

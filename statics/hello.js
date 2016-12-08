@@ -3,6 +3,23 @@ var say_hello = function(msg) {
 }
 
 $(document).ready(function() {
+    /*
+    $.ajax({
+        url: "/photos/",
+        method: "GET",
+        dataType: "json"
+    }).done(function(data) {
+        console.log(data);
+    }).fail(function(data) {
+        console.log('으앙, 안 됨');
+    });
+    */
+
+    $.getJSON("/photos/", function(data) {
+        console.log(data);
+    });
+
+
     $('#filter_nav button').on('click', function(e) {
         var value = $(this).val();
 
