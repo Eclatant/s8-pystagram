@@ -14,6 +14,16 @@ $(document).ready(function() {
         return false;
     });
 
+    $('#form-post').on('submit', function(e) {
+        var image = $('#preview').attr('src');
+        if ( image ) {
+            $('input[name="filtered_image"]').val(image);
+        }
+        else {
+            $('input[name="filtered_image"]').val('');
+        }
+    });
+
     $('#id_image').on('change', function(e) {
         var reader = new FileReader();
         reader.onerror = function(e) { console.log(e); }

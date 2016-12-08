@@ -4,8 +4,11 @@
 <html lang="ko">
     <head>
         <meta charset="UTF-8">
-<!--        <script src="{% static 'hello.js' %}"></script> -->
         <title>{% block page_title %}Pystagram{% endblock %}</title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+        <script src="{% static 'vintageJS/dist/jquery.vintage.min.js' %}"></script>
+        <script src="{% static 'vintageJS/vintage.presets.js' %}"></script>
+        <script src="{% static 'hello.js' %}"></script>
     {% bootstrap_css %}
     {% bootstrap_javascript %}
     </head>

@@ -10,6 +10,7 @@ from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
+from django.core.files.uploadedfile import SimpleUploadedFile
 
 #from photos.models import Post
 from .models import Post
@@ -28,7 +29,19 @@ def create_post(request):
     if request.method == 'GET':
         form = PostForm()
     elif request.method == 'POST':
-        form = PostForm(request.POST, request.FILES)
+        filtered = request.POST.get('filtered_image')
+        if filtered:
+            filtered_image = get_base64_image(filtered)
+            filename = request.FILES['image'].name.split(os.sep)[-1]
+            _filedata = {
+                'image': SimpleUploadedFile(
+                    filename, filtered_image
+                )
+            }
+        else:
+            _filedata = request.FILES
+
+        form = PostForm(request.POST, _filedata)
 
         if form.is_valid():
             post = form.save(commit=False)

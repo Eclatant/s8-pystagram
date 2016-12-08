@@ -7,9 +7,18 @@
 
 <form method="POST" action="" enctype="multipart/form-data">
     {% csrf_token %}
+    <input type="hidden" name="filtered_image" />
     {# {{ form.as_p }} #}
+
     {% bootstrap_form form %}
 
+    <p>
+        <div id="filter_nav">
+            <p><img src="" id="preview" /></p>
+            <button value="vintage">Vintage</button>
+            <button value="sepia">Sepia</button>
+        </div>
+    </p>
     <p>
         <button type="submit" class="btn btn-primary btn-lg">
             {% bootstrap_icon "star" %} 저장</button>
