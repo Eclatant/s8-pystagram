@@ -6,11 +6,13 @@ from django.core.paginator import EmptyPage
 from django.core.paginator import PageNotAnInteger
 from django.views.generic import ListView
 from django.views.generic.edit import CreateView
+from django.http import HttpResponse
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseNotFound
 from django.http import HttpResponseForbidden
 from django.contrib.auth.decorators import login_required
 from django.core.files.uploadedfile import SimpleUploadedFile
+from django.core import serializers
 
 #from photos.models import Post
 from .models import Post
@@ -139,8 +141,8 @@ logger = logging.getLogger('django')
 
 
 def list_posts(request):
-    raise HelloWorldError('Ooops, trouble !!!')
-    logger.info('Make a list for posts')
+    # raise HelloWorldError('Ooops, trouble !!!')
+    # logger.info('Make a list for posts')
 
     page = request.GET.get('page', 1)
     per_page = 2
@@ -156,6 +158,9 @@ def list_posts(request):
         contents = pg.page(1)
     except EmptyPage:
         contents = []
+
+    if request.is_ajax():
+        return HttpResponse(serializers.serialize('json', contents))
 
     ctx = {
         'posts': contents,
@@ -174,7 +179,7 @@ class PostListView(ListView):
         return Post.objects.order_by('-created_at')
 
 
-list_posts = PostListView.as_view()
+# list_posts = PostListView.as_view()
 
 
 @login_required

@@ -4,6 +4,17 @@ var say_hello = function(msg) {
 
 $(document).ready(function() {
 
+    $.ajax({
+        url: "/photos/",
+        method: "GET",
+        datatType: "json"
+    }).done(function(data) {
+        console.log(data);
+    }).fail(function(data) {
+        console.log("ajax error");
+        console.log(data);
+    });
+
     $('#filter_nav button').on('click', function(e) {
         var value = $(this).val();
         console.log('clicked ' + value);
