@@ -196,8 +196,10 @@ class PostListView(ListView):
 
 # list_posts = PostListView.as_view()
 
+from django.views.decorators.cache import cache_page
 
 @login_required
+@cache_page(60 * 5) # 5 minutes
 def view_post(request, pk):
     try:
         post = Post.objects.get(pk=pk)
