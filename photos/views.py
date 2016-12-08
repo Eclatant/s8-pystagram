@@ -14,6 +14,9 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.core import serializers
 
+from rest_framework import serializers as drf_serializers
+from rest_framework import viewsets
+
 #from photos.models import Post
 from .models import Post
 from .models import Tag
@@ -22,6 +25,18 @@ from .models import Like
 from .models import Category
 from .forms import PostForm
 from .forms import CommentForm
+
+
+class PostSerializer(drf_serializers.ModelSerializer):
+    class Meta:
+        model = Post
+        fields = ['category', 'content', ]
+
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+
+
 
 @login_required
 def create_post(request):

@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'photos',
     'bootstrap3',
     'profiles',
-    'raven.contrib.django.raven_compat',
+    # 'raven.contrib.django.raven_compat',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -156,6 +157,9 @@ RAVEN_CONFIG = {
     'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
 }
 
+REST_FRAMEWORK = {
+    'PAGE_SIZE': 2,
+}
 
 LOGGING = {
     'version': 1,
