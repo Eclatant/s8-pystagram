@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'profiles',
     # 'raven.contrib.django.raven_compat',
     'rest_framework',
+    'social.apps.django_app.default',
 ]
 
 MIDDLEWARE = [
