@@ -79,8 +79,10 @@ class PostTest(TestCase):
         """로그인, 로그아웃 테스트.
         """
         response = self.client.post(settings.LOGIN_URL, self.users[0], follow=True)
+        self.assertEqual(response.status_code, 200)
         self.assertTrue(response.context['user'].is_active)
         response = self.client.post(settings.LOGOUT_URL, follow=True)
+        self.assertEqual(response.status_code, 200)
         self.assertFalse(response.context['user'].is_active)
 
     def test_404(self):
