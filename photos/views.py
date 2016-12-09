@@ -196,15 +196,24 @@ class PostListView(ListView):
 
 # list_posts = PostListView.as_view()
 
-from django.views.decorators.cache import cache_page
+# from django.views.decorators.cache import cache_page
+from django.core.cache import cache
 
 @login_required
-@cache_page(60 * 5) # 5 minutes
 def view_post(request, pk):
-    try:
+    key = 'post_object_{}'.format(pk)
+    post = cache.get(key)
+    if not post:
         post = Post.objects.get(pk=pk)
-    except Post.DoesNotExist:
-        return HttpResponseNotFound()
+        cache.set(key, post, 300)
+        print('get data from db')
+    else:
+        print('get data from cache')
+
+    # try:
+    #     post = Post.objects.get(pk=pk)
+    # except Post.DoesNotExist:
+    #     return HttpResponseNotFound()
 
     if request.method == 'GET':
         form = CommentForm()
